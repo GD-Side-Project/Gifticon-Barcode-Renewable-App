@@ -205,7 +205,12 @@ class _CreateCodeScreenState extends State<CreateCodeScreen> {
             TextButton(
               onPressed: () => {_showFullscreenBottomSheet(context)},
               style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
+                foregroundColor: Color.fromARGB(255, 97, 94, 94),
+                backgroundColor: Colors.white,
+                side: BorderSide(
+                  color: Color.fromARGB(255, 205, 205, 205),
+                  width: 1,
+                ),
                 minimumSize: Size(width, 44),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -218,7 +223,12 @@ class _CreateCodeScreenState extends State<CreateCodeScreen> {
             TextButton(
               onPressed: () => {uploadData(context)},
               style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
+                side: BorderSide(
+                  color: Color.fromARGB(255, 205, 205, 205),
+                  width: 1,
+                ),
+                foregroundColor: Color.fromARGB(255, 97, 94, 94),
+                backgroundColor: Colors.white,
                 minimumSize: Size(width, 44),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
