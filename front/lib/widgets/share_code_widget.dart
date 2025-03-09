@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:flutter_image_gallery_saver/flutter_image_gallery_saver.dart';
 
 class ShareCodeWidget extends StatefulWidget {
   const ShareCodeWidget({
@@ -63,7 +63,7 @@ class _ShareCodeWidgetState extends State<ShareCodeWidget> {
     File file = File(filePath);
     await file.writeAsBytes(imageBytes);
 
-    final result = await ImageGallerySaver.saveFile(filePath);
+    final result = await FlutterImageGallerySaver.saveFile(filePath);
 
     if (context.mounted) {
       showDialog(
