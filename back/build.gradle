@@ -1,0 +1,71 @@
+/**/
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot Starters
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // Database
+    runtimeOnly 'com.h2database:h2'
+    
+    // ZXing (바코드/QR코드)
+    implementation 'com.google.zxing:core:3.4.1'
+    implementation 'com.google.zxing:javase:3.4.1'
+    
+    // Swagger UI - Spring Boot 2.7.5 호환 버전
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.12'
+    
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+// 빌드 클린 태스크 수정
+clean {
+    delete "${buildDir}"
+    doFirst {
+        file(buildDir).deleteDir()
+    }
+}
+
+// 개발 환경 설정
+bootRun {
+    systemProperty 'spring.profiles.active', 'dev'
+    mainClass = 'com.example.demo.DemoApplication'
+}
+
+bootJar {
+    enabled = true
+    mainClass = 'com.example.demo.DemoApplication'
+}
+
+jar {
+    enabled = false
+}
+
+// 인코딩 설정
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+} 

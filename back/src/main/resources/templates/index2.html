@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Gifticon API Test</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { padding: 20px; font-family: Arial, sans-serif; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; padding: 15px; background-color: #f8f9fa; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>기프티콘 API 테스트</h2>
+        
+        <!-- Upload Form -->
+        <div class="form-group">
+            <h3>업로드 테스트</h3>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <label>받는 사람:</label>
+                <input type="text" name="receiver" required>
+                
+                <label>상품명:</label>
+                <input type="text" name="productName" required>
+                
+                <label>유효기간:</label>
+                <input type="date" name="expiryDate" required>
+                
+                <label>메시지:</label>
+                <textarea name="message"></textarea>
+                
+                <label>기프티콘 이미지:</label>
+                <input type="file" name="giftImage" required>
+                
+                <label>상품 이미지:</label>
+                <input type="file" name="productImage" required>
+                
+                <button type="submit">업로드</button>
+            </form>
+        </div>
+
+        <!-- Search Form -->
+        <div class="form-group">
+            <h3>조회 테스트</h3>
+            <form id="searchForm">
+                <label>ID:</label>
+                <input type="text" id="searchId" required>
+                <button type="submit">조회</button>
+            </form>
+        </div>
+
+        <!-- Result Display -->
+        <div id="result"></div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Upload Form Submit
+            $('#uploadForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var formData = new FormData(this);
+                
+                $.ajax({
+                    url: '/api/upload',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#result').html('<pre>업로드 성공!\n' + JSON.stringify(response, null, 2) + '</pre>');
+                    },
+                    error: function(xhr, status, error) {
+                        $('#result').html('<pre>업로드 실패:\n' + JSON.stringify(xhr.responseJSON, null, 2) + '</pre>');
+                    }
+                });
+            });
+
+            // Search Form Submit
+            $('#searchForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                var id = $('#searchId').val();
+                
+                $.ajax({
+                    url: '/api/search/' + id,
+                    type: 'GET',
+                    success: function(response) {
+                        $('#result').html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');
+                    },
+                    error: function(xhr, status, error) {
+                        $('#result').html('<pre>조회 실패:\n' + JSON.stringify(xhr.responseJSON, null, 2) + '</pre>');
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = window.location.pathname.split('/').pop(); // URL에서 ID 추출
+
+            if (id) {
+                fetch(`/api/search/${id}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.status === 'success') {
+                            const gifticon = data.data;
+                            document.getElementById('receiver').textContent = gifticon.receiver;
+                            document.getElementById('productName').textContent = gifticon.productName;
+                            document.getElementById('expiryDate').textContent = new Date(gifticon.expiryDate).toLocaleDateString();
+                            document.getElementById('message').textContent = gifticon.message;
+                            document.getElementById('giftImage').src = gifticon.giftImageUrl;
+                            document.getElementById('productImage').src = gifticon.productImageUrl;
+                        } else {
+                            console.error('Failed to load gifticon data:', data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html> 
